@@ -118,7 +118,10 @@ PS2 Controller.                                                                 
         autonomous
         quit
   
-PRI autonomous                   
+PRI autonomous {{
+Autonomous control code for the robot. This code will operate until the autonomous_done
+variable is not equal to zero. Also, if the xbee chip receives a decimal 11, then the
+autonomous code will quit.                                                                 }}                  
 
   repeat while(autonomous_done == 0)                   
     if(ping.cm(18) > 15)           
@@ -134,7 +137,9 @@ PRI autonomous
   arm_cog := cognew(update_arm, @memory[100])
   clamp_cog := cognew(update_clamp, @memory[200])
   
-PRI autonomous_control
+PRI autonomous_control {{
+This code ensures that the autonomous code will only run for 29 seconds.                   }}
+
   waitcnt(cnt + (clkfreq * 29))
   autonomous_done := 1
    
