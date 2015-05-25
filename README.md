@@ -1,6 +1,7 @@
 # pahs-robotics
 Code written by: Robert Schofield and Peter Nguyen
-Code created for the Princess Anne High School robotics team. This code provides simple examples of code that can be used for the Virginia Beach STEM Robotics Challenge. Everything included in this repository is written using the SPIN programming language.
+
+This code was created for the Princess Anne High School robotics team. This code provides simple examples of code that can be used for the Virginia Beach STEM Robotics Challenge. Everything included in this repository is written using the SPIN programming language.
 
 License information can be found in the LICENSE file. 
  
