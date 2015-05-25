@@ -52,7 +52,9 @@ OBJ
   servo : "Servo32v9"
   ping : "Ping)))"
   
-PUB main
+PUB main ' Method to start the receiver code.
+         ' Do not edit this unless you know what you are doing.
+
   xbee.start(4,3,0,9600)
   servo.start
   servo.ramp
