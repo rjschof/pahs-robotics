@@ -1,5 +1,5 @@
 {{ PAHS Robotics - Receiver Example                        }}           
-{{ Copyright (c) 2015, Robert Schofield                    }}
+{{ Copyright (c) 2015, Robert Schofield and Peter Nguyen   }}
 {{ All code in this release is licensed under the GNU GPL. }}{{
 
 This code was written to correspond with the code in TransmitterExample.spin. The
@@ -74,15 +74,15 @@ will vary based upon your setup.                                                
   repeat
     CASE xbee.rx
       0: servo.set(16, full_stop)
-         servo.set(17, full_stop)
+        servo.set(17, full_stop)
       1: servo.set(16, full_reverse)
-         servo.set(17, full_reverse)
+        servo.set(17, full_reverse)
       2: servo.set(16, full_forward)
-         servo.set(17, full_forward)
+        servo.set(17, full_forward)
       3: servo.set(16, full_reverse)
-         servo.set(17, full_forward)
+        servo.set(17, full_forward)
       4: servo.set(16, full_forward)
-         servo.set(17, full_reverse)
+        servo.set(17, full_reverse)
 
 PRI update_arm {{
 The code in this section will make a robot arm that is controlled with one servo retract and
@@ -105,15 +105,16 @@ button input that the transmitter processed and sent to the receiver.           
       9: servo.set(19, full_forward)
 
 PRI update_autonomous {{
+This method checks the signals received from the XBee Chip for the signal that represents
+the button press that starts autonomous. In this example, it is the Start button on the
+PS2 Controller.                                                                            }}
 
-}}
   repeat
     CASE xbee.rx
-      10: cogstop(0)
-        cogstop(drive_cog)
+      10: cogstop(drive_cog)
         cogstop(arm_cog)
         cogstop(clamp_cog)
-        auton_control_cog := cognew(autonomous_control, @memory[0])
+        coginit(0, autonomous_control, @memory[0])
         autonomous
         quit
   
@@ -121,15 +122,15 @@ PRI autonomous
 
   repeat while(autonomous_done == 0)                   
     if(ping.cm(18) > 15)           
-        servo.Set(16,1000)      
-        servo.Set(17,2000)
+      servo.Set(16,1000)      
+      servo.Set(17,2000)
     else 
-        servo.Set(16,1500)      
-        servo.Set(17,1500)
-   if (xbee.rx == 11)
-    quit
+      servo.Set(16,1500)      
+      servo.Set(17,1500)
+    if (xbee.rx == 11)
+      quit
 
-  drive_cog := cognew(update_drive, @memory[0])
+  drive_cog := coginit(0, update_drive, @memory[0])
   arm_cog := cognew(update_arm, @memory[100])
   clamp_cog := cognew(update_clamp, @memory[200])
   
@@ -137,4 +138,3 @@ PRI autonomous_control
   waitcnt(cnt + (clkfreq * 29))
   autonomous_done := 1
    
-      
