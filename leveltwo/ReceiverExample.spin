@@ -40,12 +40,14 @@ CON
 
 VAR
   byte memory[400] ' memory location for arm, clamp, and autonomous cogs.
-  byte autonomous_done ' variable that represents whether autonomous has been used.
-
+  byte autonomous_on ' whether autonomous is on or off: 1 for on, 0 for off
+  byte counter ' counter for the number of half-seconds, which is used to turn
+               ' autonomous off after 30 seconds
+  byte xbee_cmd ' the command received by the xbee chip from the transmitter
+  
   byte drive_cog
   byte arm_cog
   byte clamp_cog
-  byte auton_control_cog 
   
 OBJ
   xbee : "Xbee_Object"
@@ -59,52 +61,56 @@ PUB main ' Method to start the receiver code.
   servo.start
   servo.ramp
 
-  autonomous_done := 0
-
+  autonomous_on := 0
+  counter := 0
+  
   drive_cog := cognew(update_drive, @memory[0])
   arm_cog := cognew(update_arm, @memory[100])
-  clamp_cog := cognew(update_clamp, @memory[200])
+  clamp_cog := cognew(update_autonomous, @memory[200])
   
-  repeat
-    update_autonomous
-
+  repeat 
+    xbee_cmd := xbee.rx
+  
 PRI update_drive {{
 The code in this section will make a robot with two servos as part of its drive train move
 based upon what the xbee chip receives from the transmitter. Please note that these values
 will vary based upon your setup.                                                            }}
 
   repeat
-    CASE xbee.rx
-      0: servo.set(16, full_stop)
-        servo.set(17, full_stop)
-      1: servo.set(16, full_reverse)
-        servo.set(17, full_reverse)
-      2: servo.set(16, full_forward)
-        servo.set(17, full_forward)
-      3: servo.set(16, full_reverse)
-        servo.set(17, full_forward)
-      4: servo.set(16, full_forward)
-        servo.set(17, full_reverse)
+    if (autonomous_on == 0)
+      CASE xbee_cmd
+        0: servo.set(16, full_stop)
+          servo.set(17, full_stop)
+        1: servo.set(16, full_forward)
+          servo.set(17, full_reverse)
+        2: servo.set(16, full_reverse)
+          servo.set(17, full_forward)
+        3: servo.set(16, full_reverse)
+          servo.set(17, full_reverse)
+        4: servo.set(16, full_forward)
+          servo.set(17, full_forward)
 
 PRI update_arm {{
 The code in this section will make a robot arm that is controlled with one servo retract and
 extend based upon the button input that the transmitter as processed.                       }}
 
   repeat
-    CASE xbee.rx
-      5: servo.set(18, full_stop)
-      6: servo.set(18, full_reverse)
-      7: servo.set(18, full_forward)
+    if (autonomous_on == 0)
+      CASE xbee_cmd
+        0: servo.set(18, full_stop)
+        6: servo.set(18, full_reverse)
+        7: servo.set(18, full_forward)
 
 PRI update_clamp {{
 The code in this section will make a robot's clamping mechanism open and close based upon the
 button input that the transmitter processed and sent to the receiver.                      }}
 
   repeat
-    CASE xbee.rx
-      5: servo.set(19, full_stop)
-      8: servo.set(19, full_reverse)
-      9: servo.set(19, full_forward)
+    if (autonomous_on == 0)
+      CASE xbee_cmd
+        0: servo.set(19, full_stop)
+        8: servo.set(19, full_reverse)
+        9: servo.set(19, full_forward)
 
 PRI update_autonomous {{
 This method checks the signals received from the XBee Chip for the signal that represents
@@ -112,11 +118,8 @@ the button press that starts autonomous. In this example, it is the Start button
 PS2 Controller.                                                                            }}
 
   repeat
-    CASE xbee.rx
-      10: cogstop(drive_cog)
-        cogstop(arm_cog)
-        cogstop(clamp_cog)
-        coginit(0, autonomous_control, @memory[0])
+    CASE xbee_cmd
+      10: autonomous_on := 1
         autonomous
         quit
   
@@ -124,24 +127,15 @@ PRI autonomous {{
 Autonomous control code for the robot. This code will operate until the autonomous_done
 variable is not equal to zero. Also, if the xbee chip receives a decimal 11, then the
 autonomous code will quit.                                                                 }}                  
-
-  repeat while(autonomous_done == 0)                   
-    if(ping.cm(18) > 15)           
-      servo.Set(16,1000)      
-      servo.Set(17,2000)
+  repeat while(counter < 150)
+    pst.newline                 
+    if(ping.cm(18) > 15)             
+      servo.Set(16, full_reverse)      
+      servo.Set(17, full_forward)
     else 
-      servo.Set(16,1500)      
-      servo.Set(17,1500)
-    if (xbee.rx == 11)
-      quit
+      servo.Set(16, full_stop)      
+      servo.Set(17, full_stop)
+    waitcnt(cnt + clkfreq / 5)
+    counter := counter + 1
 
-  drive_cog := coginit(0, update_drive, @memory[0])
-  arm_cog := cognew(update_arm, @memory[100])
-  clamp_cog := cognew(update_clamp, @memory[200])
-  
-PRI autonomous_control {{
-This code ensures that the autonomous code will only run for 29 seconds.                   }}
-
-  waitcnt(cnt + (clkfreq * 29))
-  autonomous_done := 1
-   
+  autonomous_on := 0
