@@ -127,8 +127,7 @@ PRI autonomous {{
 Autonomous control code for the robot. This code will operate until the autonomous_done
 variable is not equal to zero. Also, if the xbee chip receives a decimal 11, then the
 autonomous code will quit.                                                                 }}                  
-  repeat while(counter < 150)
-    pst.newline                 
+  repeat while(counter < 150)                 
     if(ping.cm(18) > 15)             
       servo.Set(16, full_reverse)      
       servo.Set(17, full_forward)
