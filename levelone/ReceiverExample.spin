@@ -80,9 +80,9 @@ extend based upon the button input that the transmitter as processed.           
 
   repeat
     CASE xbee.rx
-      5: servo.set(18, full_stop)
-      6: servo.set(18, full_reverse)
-      7: servo.set(18, full_forward)
+      0: servo.set(18, full_stop)
+      5: servo.set(18, full_reverse)
+      6: servo.set(18, full_forward)
 
 PRI update_clamp {{
 The code in this section will make a robot's clamping mechanism open and close based upon the
@@ -90,6 +90,6 @@ button input that the transmitter processed and sent to the receiver.           
 
   repeat
     CASE xbee.rx
-      5: servo.set(19, full_stop)
-      8: servo.set(19, full_reverse)
-      9: servo.set(19, full_forward)
+      0: servo.set(19, full_stop)
+      7: servo.set(19, full_reverse)
+      8: servo.set(19, full_forward)

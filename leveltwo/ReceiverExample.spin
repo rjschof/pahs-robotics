@@ -98,8 +98,8 @@ extend based upon the button input that the transmitter as processed.           
     if (autonomous_on == 0)
       CASE xbee_cmd
         0: servo.set(18, full_stop)
-        6: servo.set(18, full_reverse)
-        7: servo.set(18, full_forward)
+        5: servo.set(18, full_reverse)
+        6: servo.set(18, full_forward)
 
 PRI update_clamp {{
 The code in this section will make a robot's clamping mechanism open and close based upon the
@@ -109,8 +109,8 @@ button input that the transmitter processed and sent to the receiver.           
     if (autonomous_on == 0)
       CASE xbee_cmd
         0: servo.set(19, full_stop)
-        8: servo.set(19, full_reverse)
-        9: servo.set(19, full_forward)
+        7: servo.set(19, full_reverse)
+        8: servo.set(19, full_forward)
 
 PRI update_autonomous {{
 This method checks the signals received from the XBee Chip for the signal that represents
@@ -119,7 +119,7 @@ PS2 Controller.                                                                 
 
   repeat
     CASE xbee_cmd
-      10: autonomous_on := 1
+      9: autonomous_on := 1
         autonomous
         quit
   

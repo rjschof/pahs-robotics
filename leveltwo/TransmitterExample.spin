@@ -85,10 +85,10 @@ PRI update_xbee 'This method is continuously repeated by the loop in the main me
   each button press sends to the receiver.                                                          }
                                           
   CASE PS2.get_Data1
-    ps2_cross: xbee.tx(6)
-    ps2_square: xbee.tx(7)
-    ps2_circle: xbee.tx(8)
-    ps2_triangle: xbee.tx(9)
-    ps2_start: xbee.tx(10)
-    ps2_select: xbee.tx(11)
+    ps2_cross: xbee.tx(5)
+    ps2_square: xbee.tx(6)
+    ps2_circle: xbee.tx(7)
+    ps2_triangle: xbee.tx(8)
+    ps2_start: xbee.tx(9)
+    ps2_select: xbee.tx(10)
     

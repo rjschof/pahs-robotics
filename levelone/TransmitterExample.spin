@@ -65,7 +65,7 @@ PRI update_xbee 'This method is continuously repeated by the loop in the main me
   on the PS2 Controller. You get to decide what number is sent for each button press or analog
   stick movement.                                                                                   }
  
-  if (PS2.get_RightY <> 0) & (PS2.get_RightY <> 255) & (PS2.get_LeftX <> 0) & (PS2.get_LeftX <> 255)
+  if (PS2.get_RightY <> 0) & (PS2.get_RightY <> 255) & (PS2.get_RightX <> 0) & (PS2.get_RightX <> 255) & (PS2.get_Data1 == ps2_nobuttons)
     xbee.tx(0) ' No button presses and no analog stick movement
 
 { CASE Statement for analog sticks
@@ -85,9 +85,8 @@ PRI update_xbee 'This method is continuously repeated by the loop in the main me
   each button press sends to the receiver.                                                          }
                                           
   CASE PS2.get_Data1
-    ps2_nobuttons: xbee.tx(5)
-    ps2_cross: xbee.tx(6)
-    ps2_square: xbee.tx(7)
-    ps2_circle: xbee.tx(8)
-    ps2_triangle: xbee.tx(9)
+    ps2_cross: xbee.tx(5)
+    ps2_square: xbee.tx(6)
+    ps2_circle: xbee.tx(7)
+    ps2_triangle: xbee.tx(8)
     
